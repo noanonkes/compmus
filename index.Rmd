@@ -22,11 +22,33 @@ summary(cars)
 ## Including Plots
 
 This plot shows the tempo distribution of the tracks in the 1990's and the 2010's playlist. The '90s playlist shows a large peak in the lower BPM, while the '10s have a more equally distributed BPM.
-![This is a plot](temp.png)
+
+
+
+![Tempo plot](temp.png)
+
+
+
+
 In the next plot the speechiness feature of both playlists is plotted. The songs from 2010 have less speechiness than the '90s. A possible cause of this could be the "popifying" of Hip-Hop and adding more singing to the tracks. 
-![This also is a plot](speechiness.png)
+
+
+
+
+
+
+![Speechiness plot](speechiness.png)
+
+
+
+
 
 The last plot shows the duration of a song vs the danceability. The size of a point shows how high the acousticness is. An immediate standout is that the '90s songs seem to have a higher danceability than most '10s tracks. Except for a single outlier, most songs seem to have about the same duration. The acousticness does not seem to correlate to the duration or danceability. 
-![This is a plot](durvsdancevsacous.png)
+
+
+
+
+
+![Duration vs danceability vs acousticness](durvsdancevsacous.png)
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
