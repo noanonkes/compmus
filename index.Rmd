@@ -1,14 +1,20 @@
 ---
-ptitle: '90s vs 2000s: How has Hip-Hop changed?'
+ptitle: '90s vs 2010s: How has Hip-Hop changed?'
 author: "Noa Nonkes"
 date: "2/17/2022"
-output: html_document
+output: 
+  flexdashboard::flex_dashboard:
+  storyboard: true
+  theme: yeti
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(flexdashboard)
 ```
 
+Column {data-width=650}
+-----------------------------------------------------------------------
+### Introduction
 # Computational Musicology
 ## Content
 - [Corpus](#corpus)

@@ -1,0 +1,41 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+  storyboard: true
+  theme: yeti
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+Intro page
+======================================================================
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A This is a header
+
+I do not know what I am doing. 
+
+***
+This is in the side bar.
+
+Second page 
+======================================================================
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B This is also a header
+
+```{r}
+
+```
+
+### Chart C This is hopefully also a header
+
+```{r}
+
+```
+
