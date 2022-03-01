@@ -47,7 +47,7 @@ features <- rbind(rbind(features90, features10), features15)
 ```
 
 
-### **Introduction:** The shift of Hip-Hop
+### **Introduction:** The shift of Hip-Hop {data-commentary-width=500}
 **Chosen Corpus**
 I will be using three Spotify playlists, namely ["Best Rap Songs of 2010"](https://open.spotify.com/playlist/37i9dQZF1DX38t16fuNXJJ?si=4f83c993c8904728), ["Best Rap Songs of 2015"](https://open.spotify.com/playlist/37i9dQZF1DXcqWbpeXswkc?si=7246210a99d641d7) and ["I Love My '90s Hip-Hop"](https://open.spotify.com/playlist/37i9dQZF1DX186v583rmzp?si=9ea41443c20e40f1). They respectively have fifty, fifty, and a hundred songs in them. I chose this corpus, since I am a big fan of '90s Hip-Hop and I am curious how the Hip-Hop genre has changed in the next two decades. The two playlists from the '10s will represent this decade together. The research question I will try to answer in this storyboard is: What are the measurable differences between 1990's and 2010's Hip-Hop?
 
@@ -64,13 +64,13 @@ A typical track from the '90s playlist is [Do for Love by 2Pac](https://open.spo
 -- want to add (a)typical tracks from 2010's playlist here --
 
 ***
-Can't get the embedding to work yet. 
-
 ```{r, out.extra=c('allow="encrypted-media"', 'allowtransparency="true"', 'frameBorder="0"')}
 knitr::include_url("https://open.spotify.com/embed/playlist/37i9dQZF1DX186v583rmzp?theme=0", height = "380")
+knitr::include_url("https://open.spotify.com/embed/playlist/37i9dQZF1DXcqWbpeXswkc?theme=0", height = "380")
+knitr::include_url("https://open.spotify.com/embed/playlist/37i9dQZF1DWSMW5YBCZisa?theme=0", height = "380")
 ```
 
-### Is the need for a higher tempo increasing in Hip-Hop music? {data-commentary-width=400}
+### Is there need for an increased tempo in Hip-Hop music? {data-commentary-width=400}
 
 ```{r}
 features_selected <- features %>% select(tempo, year)
@@ -94,11 +94,11 @@ tempoPlot
 ```
 
 ***
-This plot shows the tempo distribution of the tracks in the 1990's and the 2010's playlist. The '90s playlist shows a large peak in the lower BPM, while the '10s have a more equally distributed BPM.
+This plot shows the tempo distribution of the tracks in the 1990's and the 2010's playlist. The '90s playlist shows a large peak in the lower BPM, while the '10s have a more equally distributed BPM. The vertical lines show the mean tempo. 
 
 -- try to find a explanation for this! --
 
-### Less rapping and more singing: how is the speechiness of the songs affected? {data-commentary-width=400}
+### Less rapping and more singing: How is the speechiness of the songs affected? {data-commentary-width=400}
 
 ```{r}
 features %>% 
@@ -225,7 +225,7 @@ compmus_long_distance(
 ***
 The 1996 song [Hip 2 Da Game by Lord Finesse](https://open.spotify.com/track/30eW6IlBK3wCwcB8TsPXua?si=2a7b96a1d9384f3f) is sampled by Mac Miller in his 2010 song called [Kool Aid and Frozen Pizza](https://open.spotify.com/track/3VmrLy4WZLHDgTXENCIz2p?si=c174207c0d68423f). Even though the background track is the same, the chromagram does not show this similarity. I suspect that the duration of the two songs have something to do with this. The Mac Miller version is about two minutes shorter than the Lord Finesse version. When dynamic time warping is performed, the Mac Miller song will need to be stretched quite a lot. 
 
-### There seems to be more structure in hip-hop
+### There seems to be an increase in structure in the Hip-Hop genre
 ```{r}
 bigPoppa <-
   get_tidy_audio_analysis("2g8HN35AnVGIk7B8yMucww") %>%
