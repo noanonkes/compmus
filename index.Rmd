@@ -6,6 +6,7 @@ output:
   flexdashboard::flex_dashboard:
     storyboard: true
     theme: yeti
+    self_contained: false
 ---
 
 ```{r setup, include=FALSE}
@@ -47,7 +48,7 @@ features <- rbind(rbind(features90, features10), features15)
 ```
 
 
-### **Introduction:** The shift of Hip-Hop {data-commentary-width=500}
+### **Introduction:** The shift of Hip-Hop {data-commentary-width=700}
 **Chosen Corpus**
 I will be using three Spotify playlists, namely ["Best Rap Songs of 2010"](https://open.spotify.com/playlist/37i9dQZF1DX38t16fuNXJJ?si=4f83c993c8904728), ["Best Rap Songs of 2015"](https://open.spotify.com/playlist/37i9dQZF1DXcqWbpeXswkc?si=7246210a99d641d7) and ["I Love My '90s Hip-Hop"](https://open.spotify.com/playlist/37i9dQZF1DX186v583rmzp?si=9ea41443c20e40f1). They respectively have fifty, fifty, and a hundred songs in them. I chose this corpus, since I am a big fan of '90s Hip-Hop and I am curious how the Hip-Hop genre has changed in the next two decades. The two playlists from the '10s will represent this decade together. The research question I will try to answer in this storyboard is: What are the measurable differences between 1990's and 2010's Hip-Hop?
 
@@ -64,11 +65,11 @@ A typical track from the '90s playlist is [Do for Love by 2Pac](https://open.spo
 -- want to add (a)typical tracks from 2010's playlist here --
 
 ***
-```{r, out.extra=c('allow="encrypted-media"', 'allowtransparency="true"', 'frameBorder="0"')}
-knitr::include_url("https://open.spotify.com/embed/playlist/37i9dQZF1DX186v583rmzp?theme=0", height = "380")
-knitr::include_url("https://open.spotify.com/embed/playlist/37i9dQZF1DXcqWbpeXswkc?theme=0", height = "380")
-knitr::include_url("https://open.spotify.com/embed/playlist/37i9dQZF1DWSMW5YBCZisa?theme=0", height = "380")
-```
+<iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX186v583rmzp?theme=0" width="50%" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+<iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWSMW5YBCZisa?theme=0" width="50%" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+<iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcqWbpeXswkc?theme=0" width="100%" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
 
 ### Is there need for an increased tempo in Hip-Hop music? {data-commentary-width=400}
 
