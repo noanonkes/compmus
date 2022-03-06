@@ -47,6 +47,173 @@ features15$track.name <- tracks15$track.name
 features <- rbind(rbind(features90, features10), features15)
 ```
 
+### Cepstrograms  
+
+```{r}
+icecube <-
+  get_tidy_audio_analysis("67ncYmW29pNJJY2yXuLPwT") %>% # Change URI.
+  compmus_align(bars, segments) %>%                     # Change `bars`
+  select(bars) %>%                                      #   in all three
+  unnest(bars) %>%                                      #   of these lines.
+  mutate(
+    pitches =
+      map(segments,
+        compmus_summarise, pitches,
+        method = "rms", norm = "euclidean"              # Change summary & norm.
+      )
+  ) %>%
+  mutate(
+    timbre =
+      map(segments,
+        compmus_summarise, timbre,
+        method = "rms", norm = "euclidean"              # Change summary & norm.
+      )
+  )
+
+icecubePlot <- icecube %>%
+  compmus_gather_timbre() %>%
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = basis,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title = "You Know How We Do It by Ice Cube") +
+  scale_fill_viridis_c() + 
+  theme_classic() +
+  theme(plot.title = element_text(size=12, hjust = 0.5))
+
+kidcudi <-
+  get_tidy_audio_analysis("393MDhe62s8hbH8ETrlxe5") %>% # Change URI.
+  compmus_align(bars, segments) %>%                     # Change `bars`
+  select(bars) %>%                                      #   in all three
+  unnest(bars) %>%                                      #   of these lines.
+  mutate(
+    pitches =
+      map(segments,
+        compmus_summarise, pitches,
+        method = "rms", norm = "euclidean"              # Change summary & norm.
+      )
+  ) %>%
+  mutate(
+    timbre =
+      map(segments,
+        compmus_summarise, timbre,
+        method = "rms", norm = "euclidean"              # Change summary & norm.
+      )
+  )
+
+kidcudiPlot <- kidcudi %>%
+  compmus_gather_timbre() %>%
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = basis,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title = "Mr. Rager by Kid Cudi") +
+  scale_fill_viridis_c() +
+  theme_classic() +
+  theme(plot.title = element_text(size=12, hjust = 0.5))
+
+figure <- ggarrange(icecubePlot, kidcudiPlot, ncol = 2, nrow = 1, common.legend = TRUE)
+
+figure
+```
+
+***
+<iframe src="https://open.spotify.com/embed/track/393MDhe62s8hbH8ETrlxe5?theme=0" width="100%" height="80" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+<iframe src="https://open.spotify.com/embed/track/67ncYmW29pNJJY2yXuLPwT?theme=0" width="100%" height="80" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+In this plot I show two songs with the lowest speechiness in my corpus. On the left I have You Know How We Do It by Ice Cube and on the right I have Mr. Rager by Kid Cudi. 
+
+The left shows a quite constant presence of the c01 coefficient. Only the begin and end have a lower magnitude, as the song fades in and out. The constant presence of c01 can possibly be explained by the fact that the song has a constant beat with no choruses or verses. 
+
+This is different in the right plot as the magnitude of c01 and c02 coefficients seem to alternate each other. These alternations exactly match the chorus and verse in the song. The c02 coefficient represents brightness, so the verses seem to have a higher brightness than the choruses. 
+
+At about 200 seconds in the right plot, it shows a high magnitude in the c02. This may be caused by the fact the singer starts singer higher and longer notes. 
+
+Both songs seem to have a constant presence of the c06 coefficient. 
+
+### Self similarity matrices 
+```{r}
+asaprocky <-
+  get_tidy_audio_analysis("1j6kDJttn6wbVyMaM42Nxm") %>% # Change URI.
+  compmus_align(bars, segments) %>%                     # Change `bars`
+  select(bars) %>%                                      #   in all three
+  unnest(bars) %>%                                      #   of these lines.
+  mutate(
+    pitches =
+      map(segments,
+        compmus_summarise, pitches,
+        method = "rms", norm = "euclidean"              # Change summary & norm.
+      )
+  ) %>%
+  mutate(
+    timbre =
+      map(segments,
+        compmus_summarise, timbre,
+        method = "rms", norm = "euclidean"              # Change summary & norm.
+      )
+  )
+
+asaprockyTimbrePlot <- asaprocky %>%
+  compmus_self_similarity(timbre, "cosine") %>% 
+  ggplot(
+    aes(
+      x = xstart + xduration / 2,
+      width = xduration,
+      y = ystart + yduration / 2,
+      height = yduration,
+      fill = d
+    )
+  ) +
+  geom_tile() +
+  coord_fixed() +
+  scale_fill_viridis_c(guide = "none") +
+  theme_classic() +
+  labs(x = "", y = "", title = "Timbre") +
+  theme(plot.title = element_text(size=12, hjust = 0.5))
+
+asaprockyChromaPlot <- asaprocky %>%
+  compmus_self_similarity(pitches, "cosine") %>% 
+  ggplot(
+    aes(
+      x = xstart + xduration / 2,
+      width = xduration,
+      y = ystart + yduration / 2,
+      height = yduration,
+      fill = d
+    )
+  ) +
+  geom_tile() +
+  coord_fixed() +
+  scale_fill_viridis_c(guide = "none") +
+  theme_classic() +
+  labs(x = "", y = "", title = "Chroma") +
+  theme(plot.title = element_text(size=12, hjust = 0.5))
+
+figure <- ggarrange(asaprockyTimbrePlot, asaprockyChromaPlot, ncol = 2, nrow = 1, common.legend = TRUE)
+
+figure
+```
+
+***
+<iframe src="https://open.spotify.com/embed/track/1j6kDJttn6wbVyMaM42Nxm?theme=0" width="100%" height="80" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+Here I show a self-similarity matrix of the song with the highest tempo in my corpus: Lord Pretty Flacko Jodye 2 (LPFJ2) by A$AP Rocky. This song has a BPM of 207.982, it however feels more like 104 BPM. 
+
+In both matrices a dark blue diagonal is visible, so the moments in the song are highly similar here. This makes sense, because here the song is compared with the exact same moment in time. 
+
+Also, in both timbre and chroma a low similarity band is seen along the x- and y-axis. This is caused by the fact the song has a constant four note melody playing, except in the beginning of the song. 
+
+The whole feel of the song is quite the same, which is why so much of the timbre matrix shows that the song is very similar to itself. However, little differences in rap melody or in the constant background melody become very visible in the chroma matrix. These are represented by the horizontal and vertical green lines. At about 85 seconds, the background track fades away for a small amount of time (which is a big change in feel), which also can be seen in the timbre matrix by the green horizontal and vertical line at this time stamp. 
 
 ### **Introduction:** The shift of Hip-Hop {data-commentary-width=700}
 **Chosen Corpus**
@@ -65,11 +232,13 @@ A typical track from the '90s playlist is [Do for Love by 2Pac](https://open.spo
 -- want to add (a)typical tracks from 2010's playlist here --
 
 ***
-<iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX186v583rmzp?theme=0" width="50%" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
 
 <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWSMW5YBCZisa?theme=0" width="50%" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
 
-<iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcqWbpeXswkc?theme=0" width="100%" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+<iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcqWbpeXswkc?theme=0" width="50%" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+<iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX186v583rmzp?theme=0" width="100%" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
 
 ### Is there need for an increased tempo in Hip-Hop music? {data-commentary-width=400}
 
