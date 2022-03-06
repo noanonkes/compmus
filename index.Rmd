@@ -215,7 +215,7 @@ Also, in both timbre and chroma a low similarity band is seen along the x- and y
 
 The whole feel of the song is quite the same, which is why so much of the timbre matrix shows that the song is very similar to itself. However, little differences in rap melody or in the constant background melody become very visible in the chroma matrix. These are represented by the horizontal and vertical green lines. At about 85 seconds, the background track fades away for a small amount of time (which is a big change in feel), which also can be seen in the timbre matrix by the green horizontal and vertical line at this time stamp. 
 
-### **Introduction:** The shift of Hip-Hop {data-commentary-width=700}
+### **Introduction:** The shift of Hip-Hop {data-commentary-width=600}
 **Chosen Corpus**
 I will be using three Spotify playlists, namely ["Best Rap Songs of 2010"](https://open.spotify.com/playlist/37i9dQZF1DX38t16fuNXJJ?si=4f83c993c8904728), ["Best Rap Songs of 2015"](https://open.spotify.com/playlist/37i9dQZF1DXcqWbpeXswkc?si=7246210a99d641d7) and ["I Love My '90s Hip-Hop"](https://open.spotify.com/playlist/37i9dQZF1DX186v583rmzp?si=9ea41443c20e40f1). They respectively have fifty, fifty, and a hundred songs in them. I chose this corpus, since I am a big fan of '90s Hip-Hop and I am curious how the Hip-Hop genre has changed in the next two decades. The two playlists from the '10s will represent this decade together. The research question I will try to answer in this storyboard is: What are the measurable differences between 1990's and 2010's Hip-Hop?
 
