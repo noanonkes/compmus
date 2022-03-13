@@ -1,7 +1,7 @@
 ---
 title: '1990s vs 2010s: How has Hip-Hop changed?'
 author: "Noa Nonkes"
-date: "2/17/2022"
+date: "February - March 2022"
 output: 
   flexdashboard::flex_dashboard:
     storyboard: true
@@ -45,6 +45,50 @@ features90$track.name <- tracks90$track.name
 features15$track.name <- tracks15$track.name
 
 features <- rbind(rbind(features90, features10), features15)
+```
+
+### Track-Level Summaries
+```{r}
+hiphop90 <-
+  get_playlist_audio_features(
+    "thesoundsofspotify",
+    "37i9dQZF1DX186v583rmzp"
+  ) %>%
+  add_audio_analysis()
+hiphop10 <-
+  get_playlist_audio_features(
+    "thesoundsofspotify",
+    "37i9dQZF1DWSMW5YBCZisa"
+  ) %>%
+  add_audio_analysis()
+hiphop15 <-
+  get_playlist_audio_features(
+    "thesoundsofspotify",
+    "37i9dQZF1DXcqWbpeXswkc"
+  ) %>%
+  add_audio_analysis()
+hiphopfeatures <- 
+  hiphop90 %>%
+  mutate(year = "1990") %>%
+  bind_rows(hiphop10 %>% mutate(year = "2010")) %>%
+  bind_rows(hiphop15 %>% mutate(year = "2010"))
+
+hiphopfeatures %>%
+  mutate(
+    timbre =
+      map(
+        segments,
+        compmus_summarise,
+        timbre,
+        method = "mean"
+      )
+  ) %>%
+  select(year, timbre) %>%
+  compmus_gather_timbre() %>%
+  ggplot(aes(x = basis, y = value, fill = year)) +
+  geom_violin() +
+  scale_fill_viridis_d() +
+  labs(x = "Spotify Timbre Coefficients", y = "", fill = "Year")
 ```
 
 ### Cepstrograms  
