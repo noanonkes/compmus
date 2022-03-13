@@ -48,6 +48,7 @@ features <- rbind(rbind(features90, features10), features15)
 ```
 
 ### Track-Level Summaries
+
 ```{r}
 hiphop90 <-
   get_playlist_audio_features(
@@ -92,6 +93,7 @@ hiphopfeatures %>%
   scale_fill_manual(values=c("#999999", "#E69F00")) +
   labs(x = "Spotify Timbre Coefficients", y = "", fill = "Year")
 ```
+
 ***
 Coefficient 3 looks like the most promising marker distinguishing these genres.
 
