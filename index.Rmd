@@ -87,9 +87,13 @@ hiphopfeatures %>%
   compmus_gather_timbre() %>%
   ggplot(aes(x = basis, y = value, fill = year)) +
   geom_violin() +
-  scale_fill_viridis_d() +
+  theme_gray() + 
+  scale_color_manual(values=c("#999999", "#E69F00")) +
+  scale_fill_manual(values=c("#999999", "#E69F00")) +
   labs(x = "Spotify Timbre Coefficients", y = "", fill = "Year")
 ```
+***
+Coefficient 3 looks like the most promising marker distinguishing these genres.
 
 ### Cepstrograms  
 
