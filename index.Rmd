@@ -47,6 +47,22 @@ features15$track.name <- tracks15$track.name
 features <- rbind(rbind(features90, features10), features15)
 ```
 
+### Switching up the **tempo**
+![Tempogram of Hotline Bling by Drake](hotlinebling_tempogram.jpeg){width=50%} ![Tempogram of Hotline Bling by Drake](hotlinebling_tempogram_cyclic.jpeg){width=50%}
+
+***
+<iframe src="https://open.spotify.com/embed/track/0wwPcA6wtMf6HUMpIRdeP7?theme=0" width="100%" height="80" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+Here I show two types of tempograms of the popular 2010's Hip-Hop song Hotline Bling by Drake: non cyclic and cyclic tempogram. The song has a percussive instrument that plays on each fourth count, giving the song a common time feel, but the drum snare do not necessarily fall on the second and fourth count as expected. 
+
+The first tempogram shows a strong horizontal band at around 270BPM and at double the tempo, 540 BPM. 
+
+The second tempogram shows a single band at around 135BPM, which feels more fitting to the song. This tempogram maps all the doubles or halves a tempo to the same tempo, so 270BPM will be mapped to 135BPM. 
+
+In both tempograms it shows a disruption in the horizontal band at around two minutes and thirty seconds, i.e. the bridge. This is caused by the fact that the beat changes at this time stamp. The constant background beat falls off and is replaced with a sparse bass drum and finger snap beat (can this be called half time?) and Drake also changes his rap flow. This makes it more difficult to asses the tempo, which is clearly seen in the both graphs. 
+
+After the bridge ends and the clear beat returns, both tempograms start to show a clear tempo band again. 
+
 ### Track-Level Summaries
 
 ```{r}
