@@ -18,6 +18,11 @@ library(ggplot2)
 library(tidyverse)
 library(ggpubr)
 library(plotly)
+library(recipes)
+library(rsample)
+library(parsnip)
+library(tune)
+library(tidymodels)
 
 tracks90 <- get_playlist_tracks("37i9dQZF1DX186v583rmzp")
 features90 <- get_track_audio_features(tracks90$track.id)
@@ -28,9 +33,9 @@ features10 <- get_track_audio_features(tracks10$track.id)
 tracks15 <- get_playlist_tracks("37i9dQZF1DXcqWbpeXswkc")
 features15 <- get_track_audio_features(tracks15$track.id)
 
-features10$year <- as.character(2010)
-features15$year <- as.character(2010)
-features90$year <- as.character(1990)
+features10$year <- "2010"
+features15$year <- "2010"
+features90$year <- "1990"
 
 tracks10 <- tracks10 %>% mutate(artists.name = map_chr(track.album.artists, function(x) x$name[1]))
 tracks15 <- tracks15 %>% mutate(artists.name = map_chr(track.album.artists, function(x) x$name[1]))
@@ -45,10 +50,149 @@ features90$track.name <- tracks90$track.name
 features15$track.name <- tracks15$track.name
 
 features <- rbind(rbind(features90, features10), features15)
+
+hiphop90 <-
+  get_playlist_audio_features(
+    "spotify",
+    "37i9dQZF1DX186v583rmzp"
+  ) %>%
+  add_audio_analysis()
+hiphop10 <-
+  get_playlist_audio_features(
+    "spotify",
+    "37i9dQZF1DWSMW5YBCZisa"
+  ) %>%
+  add_audio_analysis()
+hiphop15 <-
+  get_playlist_audio_features(
+    "spotify",
+    "37i9dQZF1DXcqWbpeXswkc"
+  ) %>%
+  add_audio_analysis()
+
+hiphop <- 
+  hiphop90 %>%
+  mutate(year = "1990") %>%
+  bind_rows(hiphop10 %>% mutate(year = "2010")) %>%
+  bind_rows(hiphop15 %>% mutate(year = "2010"))
 ```
 
+### How well can '90s and '10s Hip-Hop tracks be **classified**? {data-commentary-width=600}
+```{r}
+get_conf_mat <- function(fit) {
+  outcome <- .get_tune_outcome_names(fit)
+  fit %>% 
+    collect_predictions() %>% 
+    conf_mat(truth = outcome, estimate = .pred_class)
+}  
+
+get_pr <- function(fit) {
+  fit %>% 
+    conf_mat_resampled() %>% 
+    group_by(Prediction) %>% mutate(precision = Freq / sum(Freq)) %>% 
+    group_by(Truth) %>% mutate(recall = Freq / sum(Freq)) %>% 
+    ungroup() %>% filter(Prediction == Truth) %>% 
+    select(class = Prediction, precision, recall)
+}  
+
+hiphop_features <-
+  hiphop %>%
+  mutate(
+    year = factor(year),
+    segments = map2(segments, key, compmus_c_transpose),
+    pitches =
+      map(
+        segments,
+        compmus_summarise, pitches,
+        method = "mean", norm = "manhattan"
+      ),
+    timbre =
+      map(
+        segments,
+        compmus_summarise, timbre,
+        method = "mean",
+      )
+  ) %>%
+  mutate(pitches = map(pitches, compmus_normalise, "clr")) %>%
+  mutate_at(vars(pitches, timbre), map, bind_rows) %>%
+  unnest(cols = c(pitches, timbre))
+
+hiphop_recipe <-
+  recipe(
+    year ~
+      danceability +
+      energy +
+      loudness +
+      speechiness +
+      acousticness +
+      instrumentalness +
+      liveness +
+      valence +
+      tempo +
+      duration +
+      C + `C#|Db` + D + `D#|Eb` +
+      E + `F` + `F#|Gb` + G +
+      `G#|Ab` + A + `A#|Bb` + B +
+      c01 + c02 + c03 + c04 + c05 + c06 +
+      c07 + c08 + c09 + c10 + c11 + c12,
+    data = hiphop_features,          # Use the same name as the previous block.
+  ) %>%
+  step_center(all_predictors()) %>%
+  step_scale(all_predictors())      # Converts to z-scores.
+  # step_range(all_predictors())    # Sets range to [0, 1].
+
+hiphop_cv <- hiphop_features %>% vfold_cv(5)
+
+forest_model <-
+  rand_forest() %>%
+  set_mode("classification") %>% 
+  set_engine("ranger", importance = "impurity")
+
+hiphop_forest <- 
+  workflow() %>% 
+  add_recipe(hiphop_recipe) %>% 
+  add_model(forest_model) %>% 
+  fit_resamples(
+    hiphop_cv, 
+    control = control_resamples(save_pred = TRUE)
+  )
+
+hiphop_forest %>%
+  get_conf_mat() %>% 
+  autoplot(type="mosaic")
+```
+
+***
+
+So far I have already discussed some distinguishing characteristics between Hip-Hop from the '90s and the '10s, such as tempo differences or structure in the songs. Here I made an algorithm use the Spotify features to classify if a song is from the '90s or the '10s. I tried the k-nearest neighbour model and the random forest model, where the second outperformed the first even when changing the amount of neighbours. 
+
+The random forest model had a precision of 0.869, recall of 0.86, and an accuracy of 0.865, which is decent for only having two classes. But which features were most important in making the decision from which decade the track was? In the plot below we can see that they are:
+
+1. Tempo
+2. Valence
+3. Timbre coefficient 3
+4. Timbre coefficient 7
+5. Danceability
+
+```{r}
+workflow() %>% 
+  add_recipe(hiphop_recipe) %>% 
+  add_model(forest_model) %>% 
+  fit(hiphop_features) %>% 
+  pluck("fit", "fit", "fit") %>%
+  ranger::importance() %>% 
+  enframe() %>% 
+  mutate(name = fct_reorder(name, value)) %>% 
+  ggplot(aes(name, value)) + 
+  geom_col() + 
+  coord_flip() +
+  theme_minimal() +
+  labs(x = NULL, y = "Importance")
+```
+The fact that tempo is such an important denoter is not unexpected, as I have already shown the histogram distribution of tempo. The '90s songs show a heavy concentration of tempos at around 90-100BPM, whilst '10s songs have a more equal distribution. 
+
 ### Switching up the **tempo**
-![Tempogram of Hotline Bling by Drake](hotlinebling_tempogram.jpeg){width=50%} ![Tempogram of Hotline Bling by Drake](hotlinebling_tempogram_cyclic.jpeg){width=50%}
+![Tempogram of Hotline Bling by Drake](hotlinebling_tempogram.jpeg){width=20%} ![Tempogram of Hotline Bling by Drake](hotlinebling_tempogram_cyclic.jpeg){width=20%}
 
 ***
 <iframe src="https://open.spotify.com/embed/track/0wwPcA6wtMf6HUMpIRdeP7?theme=0" width="100%" height="80" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
@@ -66,31 +210,7 @@ After the bridge ends and the clear beat returns, both tempograms start to show 
 ### Track-Level Summaries
 
 ```{r}
-hiphop90 <-
-  get_playlist_audio_features(
-    "thesoundsofspotify",
-    "37i9dQZF1DX186v583rmzp"
-  ) %>%
-  add_audio_analysis()
-hiphop10 <-
-  get_playlist_audio_features(
-    "thesoundsofspotify",
-    "37i9dQZF1DWSMW5YBCZisa"
-  ) %>%
-  add_audio_analysis()
-hiphop15 <-
-  get_playlist_audio_features(
-    "thesoundsofspotify",
-    "37i9dQZF1DXcqWbpeXswkc"
-  ) %>%
-  add_audio_analysis()
-hiphopfeatures <- 
-  hiphop90 %>%
-  mutate(year = "1990") %>%
-  bind_rows(hiphop10 %>% mutate(year = "2010")) %>%
-  bind_rows(hiphop15 %>% mutate(year = "2010"))
-
-hiphopfeatures %>%
+hiphop %>%
   mutate(
     timbre =
       map(
@@ -111,7 +231,7 @@ hiphopfeatures %>%
 ```
 
 ***
-Coefficient 3 looks like the most promising marker distinguishing these genres.
+Coefficient .. looks like the most promising marker distinguishing these genres.
 
 ### The music may have a different vibe, but is this also visible in the **timbre**?
 
@@ -397,8 +517,12 @@ This plot shows the tempo distribution of the tracks in the 1990's and the 2010'
 
 ```{r}
 features %>% 
-  plot_ly(x = ~year, y = ~speechiness, color = I("#E69F00"), hoverinfo = "text", text = ~paste("Song:", track.name, "<br>", "Artist(s):", artists.name), marker = list(color = "#999999")) %>%
-  add_boxplot() %>% add_markers() %>% layout(showlegend = FALSE)
+  plot_ly(x = ~year, y = ~speechiness, color = I("#E69F00"), 
+          hoverinfo = "text", text = ~paste("Song:", track.name, "<br>", "Artist(s):", artists.name), 
+          marker = list(color = "#999999")) %>%
+  add_boxplot() %>% 
+  add_markers() %>% 
+  layout(showlegend = FALSE)
 ```
 
 ***
